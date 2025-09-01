@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>GitHub Performance — Immersive Dashboard</title>
+    <meta
+      name="description"
+      content="Paste a GitHub profile link and see an immersive performance dashboard with real-time analytics."
+    />
+    <link rel="stylesheet" href="output.css" />
+  </head>
+  <body class="bg-slate-900 text-slate-100 antialiased leading-relaxed">
+    <header
+      id="siteHeader"
+      role="banner"
+      class="group top-0 z-50 p-4 sm:p-6 max-w-7xl mx-auto flex items-center justify-between gap-4 rounded-2xl bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/30 backdrop-blur supports-[backdrop-filter]:bg-slate-900/40 ring-1 ring-white/10 shadow-xl shadow-black/20 relative overflow-hidden after:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent"
+    >
+      <h1
+        id="brand"
+        class="flex items-center gap-3 text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight transition-transform duration-300 will-change-transform text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300 hover:scale-[1.01] hover:[text-shadow:0_0_20px_rgba(255,255,255,0.05)]"
+        aria-label="GitHub Performance Dashboard"
+        title="GitHub Performance — immersive analytics"
+      >
+        <span
+          aria-hidden="true"
+          class="relative inline-grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-400/25 via-cyan-400/20 to-blue-400/25 ring-1 ring-white/15 shadow-inner shadow-white/10 transition-transform duration-300 group-hover:rotate-3"
+        >
+          <svg
+            class="h-4 w-4 text-emerald-300 drop-shadow-md"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M12 2l2.39 4.84L20 7.27l-3.8 3.7.9 5.25L12 14.77 6.9 16.22l.9-5.25L4 7.27l5.61-.43L12 2z"
+            />
+          </svg>
+          <span
+            class="pointer-events-none absolute inset-0 rounded-xl bg-emerald-400/0 group-hover:bg-emerald-400/5 transition-colors"
+          ></span>
+        </span>
+        <span class="whitespace-nowrap">GitHub Performance</span>
+      </h1>
+
+      <nav aria-label="primary" class="flex items-center gap-2 sm:gap-3">
+        <a
+          href="#"
+          id="guideBtn"
+          title="Open the guide"
+          class="relative inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-800/80 ring-1 ring-white/10 hover:ring-white/20 text-slate-200 hover:text-white transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+        >
+          <svg
+            class="h-4.5 w-4.5 text-slate-300"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 2a10 10 0 1010 10A10.011 10.011 0 0012 2zm.01 16a1.25 1.25 0 111.26-1.25A1.25 1.25 0 0112.01 18zm2.27-7.58a3.42 3.42 0 00-2.18-1.08 2.11 2.11 0 00-2.24 1.7.75.75 0 11-1.48-.26 3.61 3.61 0 013.79-2.9 5 5 0 013.23 1.58 3.39 3.39 0 01.91 2.38c0 1.64-1.16 2.43-2.08 3.06-.78.53-1.17.84-1.17 1.42v.28a.75.75 0 11-1.5 0v-.28c0-1.29.92-1.97 1.76-2.55s1.49-1.04 1.49-1.93a1.92 1.92 0 00-.53-1.42z"
+            />
+          </svg>
+          <span>Guide</span>
+          <span
+            class="absolute inset-0 rounded-xl pointer-events-none shadow-[0_0_0_0_rgba(255,255,255,0)] group-hover:shadow-[0_0_24px_2px_rgba(255,255,255,0.06)] transition-[box-shadow] duration-300"
+          ></span>
+        </a>
+
+        <button
+          id="exportBtn"
+          type="button"
+          title="Export visuals"
+          class="group relative inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-semibold text-slate-900 bg-gradient-to-b from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-400/40 ring-1 ring-emerald-300/50 hover:ring-emerald-200/60 transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+          data-state="idle"
+          aria-live="polite"
+        >
+          <svg
+            class="h-4.5 w-4.5 text-emerald-950"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 3a1 1 0 011 1v8.586l2.293-2.293a1 1 0 111.414 1.414l-4.001 4.001a1 1 0 01-1.414 0l-4.001-4.001a1 1 0 111.414-1.414L11 12.586V4a1 1 0 011-1z"
+            />
+            <path
+              d="M5 15a1 1 0 011 1v2h12v-2a1 1 0 112 0v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3a1 1 0 011-1z"
+            />
+          </svg>
+          <span>Export visuals</span>
+          <span
+            class="pointer-events-none absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 bg-gradient-to-r from-emerald-400/30 via-emerald-300/20 to-emerald-400/30 blur-[2px] transition-opacity"
+          ></span>
+        </button>
+      </nav>
+    </header>
+
+    <main
+      class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeIn"
+      id="main"
+    >
+      <section
+        aria-labelledby="controlsTitle"
+        class="group relative overflow-hidden lg:col-span-1 rounded-2xl p-6 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/40 backdrop-blur-md ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-500 hover:shadow-emerald-500/20"
+      >
+        <div
+          class="pointer-events-none absolute -inset-24 opacity-30 blur-3xl"
+          aria-hidden="true"
+        >
+          <div
+            class="h-48 w-48 bg-emerald-500/20 rounded-full absolute -top-8 -left-8"
+          ></div>
+          <div
+            class="h-40 w-40 bg-cyan-500/10 rounded-full absolute bottom-0 right-4"
+          ></div>
+        </div>
+
+        <h2
+          id="controlsTitle"
+          class="relative z-10 mb-4 flex items-center gap-3 text-lg font-bold tracking-tight"
+        >
+          <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400">
+            <span class="sr-only">Live</span>
+          </span>
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300"
+          >
+            Enter GitHub profile
+          </span>
+        </h2>
+
+        <form
+          id="profileForm"
+          class="relative z-10 space-y-4"
+          autocomplete="off"
+        >
+          <label class="block">
+            <span class="text-sm text-slate-300">Profile URL or username</span>
+            <div class="relative mt-1">
+              <span
+                class="pointer-events-none absolute inset-y-0 left-3 inline-grid place-items-center"
+              >
+                <svg
+                  class="h-4.5 w-4.5 text-slate-400"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 2a7 7 0 017 7 6.94 6.94 0 01-1.51 4.32l3.6 3.6a1 1 0 01-1.42 1.42l-3.6-3.6A6.94 6.94 0 0112 16a7 7 0 110-14zm0 2a5 5 0 105 5 5 5 0 00-5-5z"
+                  />
+                </svg>
+              </span>
+              <input
+                id="profileInput"
+                name="profile"
+                type="text"
+                placeholder="e.g. https://github.com/octocat or octocat"
+                required
+                class="block w-full rounded-lg bg-slate-900/70 border border-slate-700/80 px-10 py-2.5 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 hover:border-slate-600"
+              />
+            </div>
+          </label>
+
+          <div class="flex gap-2">
+            <button
+              type="submit"
+              class="group relative flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-slate-900 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 ring-1 ring-emerald-300/50 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+            >
+              <svg
+                class="h-4.5 w-4.5 text-emerald-950"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 12a1 1 0 011-1h9.586l-2.293-2.293a1 1 0 111.414-1.414l4.001 4.001a1 1 0 010 1.414l-4.001 4.001a1 1 0 11-1.414-1.414L14.586 13H5a1 1 0 01-1-1z"
+                />
+              </svg>
+              <span>Load profile</span>
+            </button>
+            <button
+              id="randomBtn"
+              type="button"
+              class="relative inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-slate-800/70 hover:bg-slate-700 text-slate-200 hover:text-white ring-1 ring-white/10 hover:ring-white/20 transition-all duration-300 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+              title="Try a random profile"
+            >
+              Random
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-400 leading-relaxed">
+            This is a client-side demo that pulls public GitHub data. If you hit
+            rate limits, provide a personal token or run a small Node proxy
+            server.
+          </p>
+        </form>
+
+        <hr class="my-5 border-slate-800/70" />
+
+        <div id="meta" class="relative z-10 space-y-3 text-sm text-slate-300">
+          <p id="status" aria-live="polite" class="flex items-center gap-2">
+            <span
+              class="h-1.5 w-1.5 rounded-full bg-slate-400 animate-pulse"
+            ></span>
+            <span>Idle — enter a username or URL above.</span>
+          </p>
+
+          <dl class="grid grid-cols-2 gap-3 text-left">
+            <div
+              class="rounded-lg bg-slate-900/40 ring-1 ring-white/5 px-3 py-2"
+            >
+              <dt class="text-slate-400 text-xs">Cached</dt>
+              <dd id="cached" class="font-medium text-slate-100">—</dd>
+            </div>
+            <div
+              class="rounded-lg bg-slate-900/40 ring-1 ring-white/5 px-3 py-2"
+            >
+              <dt class="text-slate-400 text-xs">Last fetch</dt>
+              <dd id="lastFetch" class="font-medium text-slate-100">—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <aside class="relative z-10 mt-6 text-xs text-slate-400 space-y-2">
+          <p class="font-semibold text-slate-300">Advanced features</p>
+          <ul class="list-disc ml-4 space-y-1">
+            <li>Web Worker processing for heavy metrics</li>
+            <li>SVG + Canvas hybrid visualizations</li>
+            <li>IndexedDB caching (SWR)</li>
+            <li>
+              Permalink via URL hash:
+              <code
+                class="bg-slate-900/70 ring-1 ring-white/10 px-1.5 py-0.5 rounded"
+                >#user=octocat</code
+              >
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="lg:col-span-2 grid grid-rows-[auto_1fr] gap-6">
+        <article
+          aria-labelledby="overviewTitle"
+          class="group relative overflow-hidden bg-gradient-to-b from-slate-900/70 via-slate-900/55 to-slate-900/40 supports-[backdrop-filter]:backdrop-blur-md rounded-2xl p-6 min-h-[120px] flex flex-col ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-500 hover:shadow-emerald-500/20"
+        >
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute -inset-20 opacity-25"
+          >
+            <div
+              class="absolute -top-8 -left-8 h-36 w-36 rounded-full bg-emerald-500/20 blur-3xl"
+            ></div>
+            <div
+              class="absolute bottom-0 right-6 h-28 w-28 rounded-full bg-cyan-400/15 blur-2xl"
+            ></div>
+          </div>
+
+          <div class="relative z-10 flex items-start justify-between gap-6">
+            <div class="flex min-w-0 items-start gap-4">
+              <div class="flex flex-col gap-2">
+                <h2
+                  id="overviewTitle"
+                  class="flex items-center gap-2 text-lg font-bold tracking-tight"
+                >
+                  <span
+                    class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"
+                  ></span>
+                  <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300"
+                  >
+                    Overview
+                  </span>
+                </h2>
+
+                <p id="userRow" class="mt-1 flex items-center gap-3">
+                  <img
+                    id="avatar"
+                    alt=""
+                    class="h-12 w-12 rounded-full ring-2 ring-emerald-500/40 object-cover transition-transform duration-300 hover:scale-110"
+                  />
+                </p>
+
+                <div class="min-w-0">
+                  <div
+                    id="displayName"
+                    class="font-semibold truncate max-w-[38ch] text-slate-100"
+                    title=""
+                  ></div>
+                  <div id="login" class="text-xs text-slate-400"></div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="overview"
+              class="grid grid-cols-1 md:grid-cols-3 auto-rows-[minmax(56px,auto)] gap-4 w-full max-w-xl"
+            ></div>
+          </div>
+
+          <div
+            aria-hidden="true"
+            class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent"
+          ></div>
+        </article>
+
+        <article
+          class="group relative overflow-hidden bg-gradient-to-b from-slate-900/70 via-slate-900/55 to-slate-900/40 supports-[backdrop-filter]:backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/10 shadow-xl shadow-black/20 transition-all duration-500 hover:shadow-emerald-500/20"
+        >
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute -inset-24 opacity-25"
+          >
+            <div
+              class="absolute top-10 left-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl"
+            ></div>
+            <div
+              class="absolute -bottom-10 right-20 h-36 w-36 rounded-full bg-blue-400/10 blur-3xl"
+            ></div>
+          </div>
+
+          <h2
+            class="relative z-10 text-lg font-bold mb-4 flex items-center gap-2"
+          >
+            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300"
+            >
+              Immersive Visualizations
+            </span>
+          </h2>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <section
+              aria-labelledby="contribTitle"
+              class="group/heat rounded-xl p-4 bg-gradient-to-br from-slate-900/30 to-slate-800/30 ring-1 ring-white/10 shadow-inner hover:shadow-md hover:-translate-y-0.5 transition-all"
+            >
+              <h3
+                id="contribTitle"
+                class="text-sm font-semibold tracking-tight"
+              >
+                Contribution Heatmap
+              </h3>
+              <div
+                id="heatmapWrap"
+                class="relative mt-3 min-h-[220px] max-h-[420px] overflow-auto rounded-lg p-3 flex justify-center items-center bg-slate-900/60 ring-1 ring-white/10 [background-image:linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:16px_16px] bg-[position:0_0]"
+              >
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute -inset-1 opacity-0 group-hover/heat:opacity-100 transition-opacity rounded-lg bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                ></span>
+
+                <div class="relative z-10 text-slate-400 text-sm">
+                  No data — load a profile.
+                </div>
+              </div>
+            </section>
+
+            <section
+              aria-labelledby="networkTitle"
+              class="group/net rounded-xl p-4 bg-gradient-to-br from-slate-900/30 to-slate-800/30 ring-1 ring-white/10 shadow-inner hover:shadow-md hover:-translate-y-0.5 transition-all"
+            >
+              <h3
+                id="networkTitle"
+                class="text-sm font-semibold tracking-tight"
+              >
+                Repo Network (force graph)
+              </h3>
+              <div
+                id="forceWrap"
+                role="application"
+                aria-label="Repository network graph"
+                class="relative mt-3 min-h-[220px] overflow-hidden rounded-lg p-3 bg-slate-900/60 ring-1 ring-white/10 before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.08),transparent_60%)] before:pointer-events-none"
+              >
+                <div
+                  class="w-full h-full flex items-center justify-center text-slate-400 text-sm"
+                >
+                  No repos yet.
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="relative z-10 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section
+              class="rounded-xl p-4 bg-slate-900/60 ring-1 ring-white/10 shadow-inner"
+            >
+              <h3 class="text-sm font-semibold tracking-tight">
+                Top Repositories
+              </h3>
+              <ol
+                id="topRepos"
+                class="mt-3 space-y-2 [&>li]:rounded-lg [&>li]:bg-slate-800/50 [&>li]:ring-1 [&>li]:ring-white/10 [&>li]:px-3 [&>li]:py-2 [&>li]:transition-all [&>li:hover]:bg-slate-800/70 [&>li:hover]:-translate-y-0.5 [&>li:hover]:shadow [&>li>a]:inline-flex [&>li>a]:items-center [&>li>a]:gap-2"
+              ></ol>
+            </section>
+
+            <section
+              class="rounded-xl p-4 bg-slate-900/60 ring-1 ring-white/10 shadow-inner"
+            >
+              <h3 class="text-sm font-semibold tracking-tight">
+                Language Distribution
+              </h3>
+              <div
+                id="langChart"
+                class="mt-3 min-h-[160px] flex flex-col items-center justify-center gap-3"
+              >
+                <div
+                  class="w-full max-w-[360px] rounded-lg bg-slate-950/40 ring-1 ring-white/10 p-3"
+                >
+                  <canvas id="langCanvas" class="w-full"></canvas>
+                </div>
+                <div
+                  id="langLegend"
+                  class="w-full max-w-[360px] grid grid-cols-2 gap-2 text-xs [&>*]:rounded-md [&>*]:bg-slate-800/60 [&>*]:ring-1 [&>*]:ring-white/10 [&>*]:px-2 [&>*]:py-1 [&>*]:flex [&>*]:items-center [&>*]:gap-2"
+                ></div>
+              </div>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="max-w-7xl mx-auto p-6 text-xs text-slate-500">
+      <p>Built with ❤️.</p>
+    </footer>
+
+    <template id="cardTpl">
+      <div class="rounded-xl p-4 bg-slate-900/40 border border-slate-700">
+        <h4 class="text-sm font-semibold">{{title}}</h4>
+        <p class="text-3xl font-extrabold mt-2">{{value}}</p>
+        <p class="text-xs text-slate-400 mt-1">{{hint}}</p>
+      </div>
+    </template>
+
+    <script src="index.js" defer></script>
+  </body>
+</html>

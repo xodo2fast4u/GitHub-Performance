@@ -26,8 +26,8 @@ Just paste a GitHub profile link (or username) to explore contributions, repo ne
 
 ### Run locally
 1. Clone this repository:
-   `git clone https://github.com/your-username/github-performance-dashboard.git
-   cd github-performance-dashboard `
+   ` https://github.com/ryanfront/GitHub-Performance.git
+   cd GitHub-Performance `
 
 2. Install dependencies:
 ` npm install `

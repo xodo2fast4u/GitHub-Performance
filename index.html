@@ -161,6 +161,19 @@
             </div>
           </label>
 
+          <label class="block">
+            <span class="text-sm text-slate-300">GitHub token (optional)</span>
+            <div class="relative mt-1">
+              <input
+                id="tokenInput"
+                name="token"
+                type="text"
+                placeholder="Optional token to increase rate limits"
+                class="block w-full rounded-lg bg-slate-900/70 border border-slate-700/80 px-3 py-2 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 hover:border-slate-600"
+              />
+            </div>
+          </label>
+
           <div class="flex gap-2">
             <button
               type="submit"
@@ -419,8 +432,8 @@
       </section>
     </main>
 
-    <footer class="max-w-7xl mx-auto p-6 text-xs text-slate-500">
-      <p>Built with ❤️.</p>
+    <footer class="max-w-7xl mx-auto p-6 text-xs text-slate-500 text-center">
+      <p class="mx-auto">Built with ❤️.</p>
     </footer>
 
     <template id="cardTpl">

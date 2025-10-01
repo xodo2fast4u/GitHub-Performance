@@ -188,20 +188,58 @@ function injectContribSvg(svgText, container) {
     const doc = parser.parseFromString(svgText, "image/svg+xml");
     const svg = doc.querySelector("svg");
     if (!svg) throw new Error("No SVG found");
-    svg
-      .querySelectorAll("[onload],[onclick],[onmouseover]")
-      .forEach((n) => n.removeAttribute("onload"));
+    // remove any <script> nodes for safety
+    doc.querySelectorAll("script").forEach((s) => s.remove());
+
+    // Remove inline event handlers (attributes that start with 'on')
+    svg.querySelectorAll("*").forEach((el) => {
+      Array.from(el.attributes || [])
+        .filter((a) => /^on/i.test(a.name))
+        .forEach((a) => el.removeAttribute(a.name));
+    });
+
+    // Ensure responsive scaling: if viewBox is missing but width/height exist, set viewBox
+    const hadW = svg.getAttribute("width");
+    const hadH = svg.getAttribute("height");
+    const hasViewBox = svg.getAttribute("viewBox");
+    if (!hasViewBox) {
+      const w = parseFloat(hadW);
+      const h = parseFloat(hadH);
+      if (w && h) {
+        svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      }
+    }
+
+    // Remove fixed width/height to allow CSS-based sizing; set width=100% for container scaling
     svg.removeAttribute("width");
     svg.removeAttribute("height");
     svg.setAttribute("width", "100%");
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
     const outer = new XMLSerializer().serializeToString(svg);
+    // inject sanitized svg HTML
     container.innerHTML = outer;
     const inserted = container.querySelector("svg");
     if (inserted) {
       inserted.style.display = "block";
       inserted.style.maxWidth = "100%";
+      inserted.style.width = "100%";
       inserted.style.height = "auto";
+      // If viewBox present, compute aspect ratio and set explicit height to avoid squashing
+      const vb = inserted.getAttribute("viewBox");
+      if (vb) {
+        const parts = vb.split(/\s+/).map(Number);
+        if (parts.length === 4 && parts[2] > 0) {
+          const vbW = parts[2];
+          const vbH = parts[3];
+          const contW = Math.max(
+            32,
+            container.clientWidth || container.getBoundingClientRect().width
+          );
+          const desiredH = Math.min(420, Math.round((contW * vbH) / vbW));
+          inserted.style.height = desiredH + "px";
+        }
+      }
     }
     container.querySelectorAll("rect[data-count]").forEach((r) => {
       r.classList.add("transition-transform", "duration-150");
@@ -260,9 +298,11 @@ function drawFallbackHeatmap(repos, container) {
     const cellSize = Math.max(6, Math.floor(rect.width / 60));
     const weeks = 53;
     const days = 7;
-    canvas.width = rect.width * dpr;
-    canvas.height = (cellSize * days + 20) * dpr;
-    canvas.style.height = cellSize * days + 20 + "px";
+    canvas.width = Math.max(1, Math.floor(rect.width)) * dpr;
+    canvas.height = Math.max(1, Math.floor(cellSize * days + 20)) * dpr;
+    // set exact style width/height to match layout size
+    canvas.style.width = Math.max(1, Math.floor(rect.width)) + "px";
+    canvas.style.height = Math.max(1, Math.floor(cellSize * days + 20)) + "px";
     const ctx = canvas.getContext("2d");
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -722,125 +762,142 @@ async function applyPayload(username, payload, isCache) {
 
 (function setup() {
   const form = $("profileForm");
-  form.addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    const input = $("profileInput").value;
-    const token = $("tokenInput").value || null;
-    await loadProfileFlow(input, token);
-  });
+  const profileInputEl = $("profileInput");
+  const tokenInputEl = $("tokenInput");
+  if (form && profileInputEl) {
+    form.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const input = profileInputEl.value;
+      const token = tokenInputEl ? tokenInputEl.value || null : null;
+      await loadProfileFlow(input, token);
+    });
+  }
 
-  randomBtn.addEventListener("click", async () => {
-    const examples = [
-      "sindresorhus",
-      "gaearon",
-      "torvalds",
-      "yyx990803",
-      "tj",
-      "defunkt",
-      "octocat",
-      "addaleax",
-    ];
-    const choice = examples[Math.floor(Math.random() * examples.length)];
-    $("profileInput").value = choice;
-    await loadProfileFlow(choice, $("tokenInput").value || null);
-  });
+  if (randomBtn) {
+    randomBtn.addEventListener("click", async () => {
+      const examples = [
+        "sindresorhus",
+        "gaearon",
+        "torvalds",
+        "yyx990803",
+        "tj",
+        "defunkt",
+        "octocat",
+        "addaleax",
+      ];
+      const choice = examples[Math.floor(Math.random() * examples.length)];
+      if (profileInputEl) profileInputEl.value = choice;
+      const token = tokenInputEl ? tokenInputEl.value || null : null;
+      await loadProfileFlow(choice, token);
+    });
+  }
 
   if (location.hash && location.hash.includes("user=")) {
     const u = new URLSearchParams(location.hash.replace("#", "")).get("user");
-    if (u) {
-      $("profileInput").value = u;
+    if (u && profileInputEl) {
+      profileInputEl.value = u;
       const token = sessionStorage.getItem("gh_token") || "";
-      if (token) $("tokenInput").value = token;
+      if (token && tokenInputEl) tokenInputEl.value = token;
       loadProfileFlow(u, token);
     }
   }
 
-  $("tokenInput").addEventListener("change", (e) => {
-    const v = e.target.value || "";
-    if (v) sessionStorage.setItem("gh_token", v);
-    else sessionStorage.removeItem("gh_token");
-  });
+  if (tokenInputEl) {
+    tokenInputEl.addEventListener("change", (e) => {
+      const v = e.target.value || "";
+      if (v) sessionStorage.setItem("gh_token", v);
+      else sessionStorage.removeItem("gh_token");
+    });
+  }
 
   const header = $("siteHeader");
-  header.addEventListener("mousemove", (ev) => {
-    const rect = header.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = (ev.clientX - cx) / rect.width;
-    const dy = (ev.clientY - cy) / rect.height;
-    const brand = $("brand");
-    brand.style.transform = `translate3d(${dx * 6}px, ${dy * 6}px, 0)`;
-  });
-  header.addEventListener("mouseleave", () => {
-    const brand = $("brand");
-    brand.style.transform = "";
-  });
+  const brandEl = $("brand");
+  if (header && brandEl) {
+    header.addEventListener("mousemove", (ev) => {
+      const rect = header.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (ev.clientX - cx) / rect.width;
+      const dy = (ev.clientY - cy) / rect.height;
+      brandEl.style.transform = `translate3d(${dx * 6}px, ${dy * 6}px, 0)`;
+    });
+    header.addEventListener("mouseleave", () => {
+      brandEl.style.transform = "";
+    });
+  }
 
-  exportBtn.addEventListener("click", async () => {
-    exportBtn.disabled = true;
-    exportBtn.textContent = "Exporting…";
-    try {
-      const svgNode = forceWrap.querySelector("svg");
-      const heatmapNode =
-        heatmapWrap.querySelector("svg") || heatmapWrap.querySelector("canvas");
-      const canvases = [langCanvas];
-      const cw = Math.min(1600, document.documentElement.clientWidth);
-      const ch = 1200;
-      const out = document.createElement("canvas");
-      out.width = cw * (window.devicePixelRatio || 1);
-      out.height = ch * (window.devicePixelRatio || 1);
-      const ctx = out.getContext("2d");
-      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-      ctx.fillStyle = "#071023";
-      ctx.fillRect(0, 0, cw, ch);
+  if (exportBtn) {
+    exportBtn.addEventListener("click", async () => {
+      exportBtn.disabled = true;
+      exportBtn.textContent = "Exporting…";
+      try {
+        const svgNode = forceWrap.querySelector("svg");
+        const heatmapNode =
+          heatmapWrap.querySelector("svg") ||
+          heatmapWrap.querySelector("canvas");
+        const canvases = [langCanvas];
+        const cw = Math.min(1600, document.documentElement.clientWidth);
+        const ch = 1200;
+        const out = document.createElement("canvas");
+        out.width = cw * (window.devicePixelRatio || 1);
+        out.height = ch * (window.devicePixelRatio || 1);
+        const ctx = out.getContext("2d");
+        ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+        ctx.fillStyle = "#071023";
+        ctx.fillRect(0, 0, cw, ch);
 
-      let x = 20,
-        y = 20;
-      async function drawSvgToCanvas(svgEl, targetX, targetY, maxW) {
-        if (!svgEl) return;
-        const svgStr = new XMLSerializer().serializeToString(svgEl);
-        const svg64 =
-          "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
-        const img = new Image();
-        img.src = svg64;
-        await new Promise((r) => (img.onload = r));
-        const scale = Math.min(1, maxW / img.width);
-        const w = img.width * scale,
-          h = img.height * scale;
-        ctx.drawImage(img, targetX, targetY, w, h);
+        let x = 20,
+          y = 20;
+        async function drawSvgToCanvas(svgEl, targetX, targetY, maxW) {
+          if (!svgEl) return;
+          const svgStr = new XMLSerializer().serializeToString(svgEl);
+          const svg64 =
+            "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+          const img = new Image();
+          img.src = svg64;
+          await new Promise((r) => (img.onload = r));
+          const scale = Math.min(1, maxW / img.width);
+          const w = img.width * scale,
+            h = img.height * scale;
+          ctx.drawImage(img, targetX, targetY, w, h);
+        }
+        if (svgNode)
+          await drawSvgToCanvas(svgNode, x, y, Math.min(900, cw - 40));
+        y += 360;
+        if (heatmapNode && heatmapNode.tagName === "svg") {
+          await drawSvgToCanvas(heatmapNode, 20, y, Math.min(cw - 40, 900));
+        } else if (heatmapNode && heatmapNode.tagName === "CANVAS") {
+          ctx.drawImage(
+            heatmapNode,
+            20,
+            y,
+            Math.min(
+              cw - 40,
+              heatmapNode.width / (window.devicePixelRatio || 1)
+            )
+          );
+        }
+        const lc = langCanvas;
+        if (lc)
+          ctx.drawImage(
+            lc,
+            cw - lc.width / (window.devicePixelRatio || 1) - 20,
+            ch - lc.height / (window.devicePixelRatio || 1) - 20
+          );
+        const url = out.toDataURL("image/png");
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `gh-dashboard-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {
+        console.error(e);
+        alert("Export failed — see console.");
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = "Export visuals";
       }
-      if (svgNode) await drawSvgToCanvas(svgNode, x, y, Math.min(900, cw - 40));
-      y += 360;
-      if (heatmapNode && heatmapNode.tagName === "svg") {
-        await drawSvgToCanvas(heatmapNode, 20, y, Math.min(cw - 40, 900));
-      } else if (heatmapNode && heatmapNode.tagName === "CANVAS") {
-        ctx.drawImage(
-          heatmapNode,
-          20,
-          y,
-          Math.min(cw - 40, heatmapNode.width / (window.devicePixelRatio || 1))
-        );
-      }
-      const lc = langCanvas;
-      if (lc)
-        ctx.drawImage(
-          lc,
-          cw - lc.width / (window.devicePixelRatio || 1) - 20,
-          ch - lc.height / (window.devicePixelRatio || 1) - 20
-        );
-      const url = out.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `gh-dashboard-${Date.now()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (e) {
-      console.error(e);
-      alert("Export failed — see console.");
-    } finally {
-      exportBtn.disabled = false;
-      exportBtn.textContent = "Export visuals";
-    }
-  });
+    });
+  }
 })();

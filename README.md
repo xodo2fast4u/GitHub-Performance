@@ -1,12 +1,12 @@
-# GitHub Performance — Immersive Dashboard
+# GitHub Performance
 
 An interactive web dashboard that visualizes GitHub user activity and repository insights in a clean, immersive interface.  
-Just paste a GitHub profile link (or username) to explore contributions, repo networks, languages, and more — all powered by public GitHub data.
+Just paste a GitHub profile link (or username) to explore contributions, repo networks, languages and more all powered by public GitHub data.
 
 ## Features
 
-- Profile lookup — enter a GitHub username or full profile URL
-- Real-time metrics — fetches live GitHub data (client-side)
+- Profile lookup enter a GitHub username or full profile URL
+- Real-time metrics fetches live GitHub data (client-side)
 - Immersive visualizations:
   - Contribution heatmap
   - Repository network (force graph)
@@ -26,7 +26,7 @@ Just paste a GitHub profile link (or username) to explore contributions, repo ne
 
 ### Run locally
 1. Clone this repository:
-   ` https://github.com/ryanfront/GitHub-Performance.git
+   ` https://github.com/xodo2fast4u/GitHub-Performance.git
    cd GitHub-Performance `
 
 2. Install dependencies:
@@ -44,7 +44,7 @@ Just paste a GitHub profile link (or username) to explore contributions, repo ne
 ## Example Usage
 
 1. Enter a GitHub username (e.g. octocat).
-2. View contribution heatmap, repository networks, top languages, and more.
+2. View contribution heatmap, repository networks, top languages and more.
 3. Export visuals for sharing.
 
 ## LICENSE
